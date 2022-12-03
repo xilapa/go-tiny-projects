@@ -34,7 +34,7 @@ func (s *CalculateFinalPriceUseCaseTestSuite) TestHandleReturnNoErrorWithValidCo
 	// arrange
 	repo := db.NewOrderRepository(s.Db)
 	cmmd := &OrderCommand{ID: "123", Price: 10.3, Tax: 2.2}
-	useCase := CalculateFinalPriceUseCase{repo}
+	useCase := NewCalculateFinalPriceUseCase(repo)
 	expected := &OrderResult{
 		ID:         cmmd.ID,
 		Price:      cmmd.Price,
