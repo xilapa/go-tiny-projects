@@ -33,3 +33,13 @@ func (r *OrderRepository) Save(o *orders.Order) (int64, error) {
 
 	return rows, nil
 }
+
+func (r *OrderRepository) GetTotal() (int, error) {
+	var total int
+	err := r.Db.QueryRow("SELECT COUNT(id) FROM orders").
+		Scan(&total)
+	if err != nil {
+		return 0, err
+	}
+	return total, nil
+}
