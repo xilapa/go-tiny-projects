@@ -5,33 +5,18 @@ import (
 	"testing"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/stretchr/testify/suite"
 	orders "github.com/xilapa/go-tiny-projects/order-processor/internal/order/entity"
 	"github.com/xilapa/go-tiny-projects/order-processor/internal/order/infra/db"
+	assert "github.com/xilapa/go-tiny-projects/test-assertions"
 )
 
-type CalculateFinalPriceUseCaseTestSuite struct {
-	suite.Suite
+type calculateFinalPriceUseCaseTestSuite struct {
 	Db *sql.DB
 }
 
-// TearDownSuite implements suite.TearDownAllSuite
-func (s *CalculateFinalPriceUseCaseTestSuite) TearDownSuite() {
-	s.Db.Close()
-}
-
-// SetupSuite implements suite.SetupAllSuite
-func (s *CalculateFinalPriceUseCaseTestSuite) SetupSuite() {
-	db, err := db.InitialiazeDb("")
-	s.NoError(err)
-	s.Db = db
-}
-
-var _ suite.SetupAllSuite = (*CalculateFinalPriceUseCaseTestSuite)(nil)
-var _ suite.TearDownAllSuite = (*CalculateFinalPriceUseCaseTestSuite)(nil)
-
-func (s *CalculateFinalPriceUseCaseTestSuite) TestHandleReturnNoErrorWithValidCommand() {
+func (s *calculateFinalPriceUseCaseTestSuite) handleReturnNoErrorWithValidCommand(t *testing.T) {
 	// arrange
+	// TODO: use a fake that reads initial data from json, and save data in memory
 	repo := db.NewOrderRepository(s.Db)
 	cmmd := &OrderCommand{ID: "123", Price: 10.3, Tax: 2.2}
 	useCase := NewCalculateFinalPriceUseCase(repo)
@@ -46,8 +31,8 @@ func (s *CalculateFinalPriceUseCaseTestSuite) TestHandleReturnNoErrorWithValidCo
 	res, err := useCase.Handle(cmmd)
 
 	// assert
-	s.NoError(err)
-	s.Equal(expected, res)
+	assert.NoError(t, err)
+	assert.Equal(t, expected, res)
 
 	// checking the db
 	var orderFromDb orders.Order
@@ -64,10 +49,20 @@ func (s *CalculateFinalPriceUseCaseTestSuite) TestHandleReturnNoErrorWithValidCo
 			&orderFromDb.Tax, &orderFromDb.FinalPrice,
 		)
 
-	s.NoError(err)
-	s.EqualValues(expected, &orderFromDb)
+	assert.NoError(t, err)
+	assert.EqualValues(t, expected, &orderFromDb)
 }
 
-func TestRunSuite(t *testing.T) {
-	suite.Run(t, new(CalculateFinalPriceUseCaseTestSuite))
+func TestCalculatePriceUseCase(t *testing.T) {
+	// setup
+	t.Parallel()
+	db, err := db.InitialiazeDb("")
+	assert.NoError(t, err)
+	suite := &calculateFinalPriceUseCaseTestSuite{db}
+
+	// teardown
+	defer db.Close()
+
+	// run tests
+	t.Run("HandleReturnNoErrorWithValidCommand", suite.handleReturnNoErrorWithValidCommand)
 }

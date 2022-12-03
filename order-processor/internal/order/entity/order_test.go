@@ -3,9 +3,12 @@ package orders
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	assert "github.com/xilapa/go-tiny-projects/test-assertions"
 )
 
+// TODO 1: use functional builder pattern
+// https://hackandsla.sh/posts/2020-11-23-golang-test-fixtures/
+// TODO 2: add fuzzy tests
 func TestCannotCreatOrderWithEmptyId(t *testing.T) {
 	order := Order{}
 	assert.Error(t, order.IsValid(), "invalid id")
@@ -24,7 +27,7 @@ func TestCannotCreateOrderWithInvalidTax(t *testing.T) {
 func TestCanCreateOrderWithValidParams(t *testing.T) {
 	order, err := NewOrder("123", 12.12, 2)
 	assert.NoError(t, err, "should be valid")
-	assert.NotNil(t, order)
+	assert.NotEqual(t, nil, order)
 }
 
 func TestCanCalculatePrice(t *testing.T) {

@@ -28,3 +28,8 @@ func InitialiazeDb(connString string) (*sql.DB, error) {
 	}
 	return db, nil
 }
+
+func ClearOrders(db *sql.DB) error {
+	_, err := db.Exec("DELETE FROM orders")
+	return err
+}
