@@ -6,22 +6,79 @@ import (
 	assert "github.com/xilapa/go-tiny-projects/test-assertions"
 )
 
-// TODO 1: use functional builder pattern
-// https://hackandsla.sh/posts/2020-11-23-golang-test-fixtures/
 // TODO 2: add fuzzy tests
-func TestCannotCreatOrderWithEmptyId(t *testing.T) {
-	order := Order{}
-	assert.Error(t, order.IsValid(), "invalid id")
+
+type orderOption func(*Order)
+
+func getTestOrder(opts ...orderOption) *Order {
+	o := &Order{
+		ID:    "123",
+		Price: 10.0,
+		Tax:   1,
+	}
+
+	for i := range opts {
+		opts[i](o)
+	}
+
+	return o
 }
 
-func TestCannotCreateOrderWithInvalidPrice(t *testing.T) {
-	order := Order{ID: "123"}
-	assert.Error(t, order.IsValid(), "invalid price")
+func withId(id string) orderOption {
+	return func(o *Order) {
+		o.ID = id
+	}
 }
 
-func TestCannotCreateOrderWithInvalidTax(t *testing.T) {
-	order := Order{ID: "123", Price: 12.12}
-	assert.Error(t, order.IsValid(), "invalid tax")
+func withPrice(price float64) orderOption {
+	return func(o *Order) {
+		o.Price = price
+	}
+}
+
+func withTax(tax float64) orderOption {
+	return func(o *Order) {
+		o.Tax = tax
+	}
+}
+
+var orderValidationData = []struct {
+	testName      string
+	order         *Order
+	errorExpected bool
+}{
+	{
+		testName:      "valid order data",
+		order:         getTestOrder(),
+		errorExpected: false,
+	},
+	{
+		testName:      "invalid id",
+		order:         getTestOrder(withId("")),
+		errorExpected: true,
+	},
+	{
+		testName:      "invalid price",
+		order:         getTestOrder(withPrice(0)),
+		errorExpected: true,
+	},
+	{
+		testName:      "invalid tax",
+		order:         getTestOrder(withTax(0)),
+		errorExpected: true,
+	},
+}
+
+func TestOrderValidation(t *testing.T) {
+	var err error
+	for i := range orderValidationData {
+		err = orderValidationData[i].order.IsValid()
+		if orderValidationData[i].errorExpected {
+			assert.Error(t, err, orderValidationData[i].testName)
+			continue
+		}
+		assert.NoError(t, err, orderValidationData[i].testName)
+	}
 }
 
 func TestCanCreateOrderWithValidParams(t *testing.T) {
