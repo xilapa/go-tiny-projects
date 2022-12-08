@@ -16,3 +16,12 @@ On this project I've implemented unity and integration tests using the "Test Sui
 
 ### test-assertions
 Simple test assertions that check if two values are equals or that a value is not an error. I've created this package after start using the standard tests lib on the "order-processor" project, to follow the DRY principle.
+
+### strong-rabbit
+While working on the "order-processor" project I missed the auto-reconnect capability present on the official RabbitMq C# client. So I've made this package, it is a wrapper around the official one that gives the capability to auto-reconnect on failures and also to multiplex channels on connections. 
+The connections are stored in a pool and separated by their usage. Calling Connect() multiple times with the same connection name will return a pointer to the same connection, it'll not open a new one.
+Making it easy to have many channels on a single connection, while making it possible to have different connections to publish and consume, as the [official docs recommends](https://pkg.go.dev/github.com/rabbitmq/amqp091-go#Channel.Consume)
+It can be used as the official one.
+- Call Connect() to ge a connection, with the connection call Channel() to get an auto-reconnecting channel. Call Consume() on the channel to start consuming.
+- To stop the channel just call Close(), it's idempotent as the official.
+- To stop a connection and remove it from the pool, call Close() on the connection.
