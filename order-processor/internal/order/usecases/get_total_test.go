@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	orders "github.com/xilapa/go-tiny-projects/order-processor/internal/order/entity"
-	"github.com/xilapa/go-tiny-projects/order-processor/internal/order/infra/db"
+	"github.com/xilapa/go-tiny-projects/order-processor/internal/order/infra/database"
 	assert "github.com/xilapa/go-tiny-projects/test-assertions"
 )
 
@@ -16,7 +16,7 @@ type getTotalUseCaseTestSuite struct {
 
 func (s *getTotalUseCaseTestSuite) canHandleGetTotal(t *testing.T) {
 	// arrange
-	repo := db.NewOrderRepository(s.Db)
+	repo := database.NewOrderRepository(s.Db)
 	useCase := NewGetTotalUseCase(repo)
 
 	// assert no orders
@@ -40,7 +40,7 @@ func (s *getTotalUseCaseTestSuite) canHandleGetTotal(t *testing.T) {
 func TestGetTotalUseCase(t *testing.T) {
 	// setup
 	t.Parallel()
-	db, err := db.InitialiazeDb("")
+	db, err := database.InitialiazeDb("")
 	assert.NoError(t, err)
 	testSuite := &getTotalUseCaseTestSuite{db}
 

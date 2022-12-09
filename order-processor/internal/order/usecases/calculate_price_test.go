@@ -6,7 +6,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 	orders "github.com/xilapa/go-tiny-projects/order-processor/internal/order/entity"
-	"github.com/xilapa/go-tiny-projects/order-processor/internal/order/infra/db"
+	"github.com/xilapa/go-tiny-projects/order-processor/internal/order/infra/database"
 	assert "github.com/xilapa/go-tiny-projects/test-assertions"
 )
 
@@ -17,7 +17,7 @@ type calculateFinalPriceUseCaseTestSuite struct {
 func (s *calculateFinalPriceUseCaseTestSuite) handleReturnNoErrorWithValidCommand(t *testing.T) {
 	// arrange
 	// TODO: use a fake that reads initial data from json, and save data in memory
-	repo := db.NewOrderRepository(s.Db)
+	repo := database.NewOrderRepository(s.Db)
 	cmmd := &OrderCommand{ID: "123", Price: 10.3, Tax: 2.2}
 	useCase := NewCalculateFinalPriceUseCase(repo)
 	expected := &OrderResult{
@@ -56,7 +56,7 @@ func (s *calculateFinalPriceUseCaseTestSuite) handleReturnNoErrorWithValidComman
 func TestCalculatePriceUseCase(t *testing.T) {
 	// setup
 	t.Parallel()
-	db, err := db.InitialiazeDb("")
+	db, err := database.InitialiazeDb("")
 	assert.NoError(t, err)
 	suite := &calculateFinalPriceUseCaseTestSuite{db}
 

@@ -1,8 +1,6 @@
-package db
+package database
 
-import (
-	"database/sql"
-)
+import "database/sql"
 
 func InitialiazeDb(connString string) (*sql.DB, error) {
 	if connString == "" {
@@ -16,6 +14,7 @@ func InitialiazeDb(connString string) (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	_, err = db.Exec(
 		`CREATE TABLE orders (
 			id varchar(255) NOT NULL PRIMARY KEY ,

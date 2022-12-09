@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"database/sql"
@@ -41,5 +41,6 @@ func (r *OrderRepository) GetTotal() (int, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	return total, nil
 }
