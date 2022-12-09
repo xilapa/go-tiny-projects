@@ -117,7 +117,7 @@ func (ch *StrongChannel) internalConsume(out chan amqp.Delivery) bool {
 // If the reconnection or channel opening fails, it'll log
 // the error and return.
 func (ch *StrongChannel) reconnect() {
-	conn, err := Connect(ch.conn.url, ch.conn.name)
+	conn, err := Connect(ch.conn.url, ch.conn.group)
 	if err != nil {
 		log.Printf("%s: cannot reconnect: %s", ch.opts.Consumer, err)
 		return
