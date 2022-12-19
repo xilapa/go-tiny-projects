@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -52,5 +53,6 @@ func main() {
 			log.Printf("message processed: %s", string(resjson))
 		}
 		msg.Ack(false)
+		<-time.After(time.Second * 10)
 	}
 }

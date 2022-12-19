@@ -7,7 +7,7 @@ func SetupConsumeChannel(url, connGroup, queue string) *strongrabbit.StrongChann
 	if err != nil {
 		panic(err)
 	}
-	ch, err := conn.Channel()
+	ch, err := conn.Channel(strongrabbit.Consumer, "consumer")
 	if err != nil {
 		panic(err)
 	}
@@ -18,7 +18,7 @@ func SetupConsumeChannel(url, connGroup, queue string) *strongrabbit.StrongChann
 	}
 
 	_, err = ch.QueueDeclare(
-		"orders",
+		queue,
 		true,
 		false,
 		false,
@@ -26,6 +26,48 @@ func SetupConsumeChannel(url, connGroup, queue string) *strongrabbit.StrongChann
 		nil,
 	)
 
+	if err != nil {
+		panic(err)
+	}
+
+	return ch
+}
+
+func SetupProducerChannel(url, group, exchange, queue, binding string) *strongrabbit.StrongChannel {
+	conn, err := strongrabbit.Connect(url, group)
+	if err != nil {
+		panic(err)
+	}
+
+	ch, err := conn.Channel(strongrabbit.Publisher, "producer")
+	if err != nil {
+		panic(err)
+	}
+
+	err = ch.Confirm(false)
+	if err != nil {
+		panic(err)
+	}
+
+	err = ch.ExchangeDeclare(
+		exchange,
+		"fanout",
+		true,
+		false,
+		false,
+		false,
+		nil)
+	if err != nil {
+		panic(err)
+	}
+
+	err = ch.QueueBind(
+		queue,
+		binding,
+		exchange,
+		false,
+		nil,
+	)
 	if err != nil {
 		panic(err)
 	}
