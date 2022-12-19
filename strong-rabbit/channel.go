@@ -28,6 +28,10 @@ type StrongChannel struct {
 	confirmNoWait    bool              // save the noWait used when setting the confirm mode
 	chType           ChannelType       // the underlying channel type
 	lock             sync.Mutex        // mutex used when closing the channel
+	qos              bool              // save if qos was called on channel
+	prefetchCount    int               // save the prefetch count set to the channel
+	prefetchSize     int               // save the prefecth size set to the channel
+	prefetchGlobal   bool              // save the prefetch global options set to the channel
 }
 
 type ChannelType int
@@ -262,6 +266,15 @@ func (ch *StrongChannel) reconnect() (success bool) {
 		}
 	}
 
+	// if channel has qos, re-set it
+	if ch.qos {
+		err = newChan.Qos(ch.prefetchCount, ch.prefetchSize, ch.prefetchGlobal)
+		if err != nil {
+			log.Printf("[%s] cannot restore channel qos: %s", ch.Name, err)
+			return
+		}
+	}
+
 	// replace the notify close chan and the underlying channel
 	ch.Channel = newChan
 	ch.notifyClose = newChan.NotifyClose(make(chan *amqp.Error))
@@ -337,8 +350,27 @@ func (ch *StrongChannel) Confirm(noWait bool) error {
 	if ch.chType != Publisher {
 		return errInvalidChannelType
 	}
-	// save the confirm mode to use on reconnection
+
+	err := ch.Channel.Confirm(noWait)
+	if err != nil {
+		return err
+	}
+	// if there is no error, save the confirm mode to use on reconnection
 	ch.confirm = true
 	ch.confirmNoWait = noWait
-	return ch.Channel.Confirm(noWait)
+	return nil
+}
+
+func (ch *StrongChannel) Qos(prefetchCount, prefetchSize int, global bool) error {
+	err := ch.Channel.Qos(prefetchCount, prefetchSize, global)
+	if err != nil {
+		return err
+	}
+
+	// if there is no error, save QoS to use on reconnection
+	ch.qos = true
+	ch.prefetchCount = prefetchCount
+	ch.prefetchSize = prefetchSize
+	ch.prefetchGlobal = global
+	return nil
 }

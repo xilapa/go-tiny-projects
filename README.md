@@ -25,6 +25,10 @@ The connections are stored in a pool and separated by their usage. Calling Conne
 Making it easy to have many channels on a single connection, while making it possible to have different connections to publish and consume, as the [official docs recommends](https://pkg.go.dev/github.com/rabbitmq/amqp091-go#Channel.Consume)
 It can be used as the official one.
 
-- Call Connect() to ge a connection, with the connection call Channel() to get an auto-reconnecting channel. Call Consume() on the channel to start consuming.
+The StrongChannel can be of type Consumer or Publisher, each type is optimized to use less resources. The Publisher channel uses a background go-routine for reconnection while the Consumer channel don't. The Consumer channel listen's simultaneously to channel/connection errors while listening for new messages.
+
+- Call Connect() to ge a connection, with the connection call Channel() passing a name and it's type to get an auto-reconnecting channel. Call Consume() on the channel to start consuming or call any Publish method to publish a message.
+- Publish confirms and channel QoS are restored on reconnection.
+- Topology is not restored on reconnection.
 - To stop the channel just call Close(), it's idempotent as the official.
 - To stop a connection and remove it from the pool, call Close() on the connection.
