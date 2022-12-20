@@ -11,13 +11,13 @@ import (
 	"github.com/google/uuid"
 	amqp "github.com/rabbitmq/amqp091-go"
 	orders "github.com/xilapa/go-tiny-projects/order-processor/internal/order/entity"
-	rabbitmqhelper "github.com/xilapa/go-tiny-projects/order-processor/internal/order/infra/rabbitmq"
+	rabbithelper "github.com/xilapa/go-tiny-projects/order-processor/pkg/rabbitmq"
 	strongrabbit "github.com/xilapa/go-tiny-projects/strong-rabbit"
 )
 
 func main() {
 
-	ch := rabbitmqhelper.SetupProducerChannel(
+	ch := rabbithelper.SetupProducerChannel(
 		"amqp://guest:guest@localhost:5672/",
 		"producer",
 		"order-processor",

@@ -10,12 +10,13 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/xilapa/go-tiny-projects/order-processor/internal/order/infra/database"
-	rabbithelper "github.com/xilapa/go-tiny-projects/order-processor/internal/order/infra/rabbitmq"
 	"github.com/xilapa/go-tiny-projects/order-processor/internal/order/usecases"
+	rabbithelper "github.com/xilapa/go-tiny-projects/order-processor/pkg/rabbitmq"
 	strongrabbit "github.com/xilapa/go-tiny-projects/strong-rabbit"
 )
 
 func main() {
+
 	db, err := database.InitialiazeDb("./orders.db?_fk=on")
 	if err != nil {
 		panic(err)
