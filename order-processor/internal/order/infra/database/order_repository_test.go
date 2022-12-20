@@ -74,27 +74,14 @@ func TestOrderRepository(t *testing.T) {
 	defer db.Close()
 
 	// run tests
-	tests := []struct {
-		name string
-		f    func(t *testing.T)
-	}{
-		{
-			name: "CanSaveOrderToDb",
-			f:    suite.canSaveOrderToDb,
-		},
-		{
-			name: "CanCountTotalOrders",
-			f:    suite.canCountTotalOrders,
-		},
+	tests := map[string]func(t *testing.T){
+		"CanSaveOrderToDb":    suite.canSaveOrderToDb,
+		"CanCountTotalOrders": suite.canCountTotalOrders,
 	}
 
-	totalTests := len(tests)
 	for i := range tests {
-		t.Run(tests[i].name, tests[i].f)
-		// only do cleanup between tests
-		if i == totalTests-1 {
-			return
-		}
+		t.Run(i, tests[i])
+		// do cleanup between tests
 		ClearOrders(db)
 	}
 }

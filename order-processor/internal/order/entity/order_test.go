@@ -42,52 +42,52 @@ func withTax(tax float64) orderOption {
 	}
 }
 
-var orderValidationData = []struct {
-	testName      string
+// maps ensures that tests are independent of each other
+// https://github.com/golang/go/wiki/TableDrivenTests#using-a-map-to-store-test-cases
+var orderValidationData = map[string]struct {
 	order         *Order
 	errorExpected bool
 }{
-	{
-		testName:      "valid order data",
+	"valid order data": {
 		order:         getTestOrder(),
 		errorExpected: false,
 	},
-	{
-		testName:      "invalid id",
+	"invalid id": {
 		order:         getTestOrder(withId("")),
 		errorExpected: true,
 	},
-	{
-		testName:      "invalid price",
+	"invalid price": {
 		order:         getTestOrder(withPrice(0)),
 		errorExpected: true,
 	},
-	{
-		testName:      "invalid tax",
+	"invalid tax": {
 		order:         getTestOrder(withTax(0)),
 		errorExpected: true,
 	},
 }
 
 func TestOrderValidation(t *testing.T) {
+	t.Parallel()
 	var err error
 	for i := range orderValidationData {
 		err = orderValidationData[i].order.IsValid()
 		if orderValidationData[i].errorExpected {
-			assert.Error(t, err, orderValidationData[i].testName)
+			assert.Error(t, err, i)
 			continue
 		}
-		assert.NoError(t, err, orderValidationData[i].testName)
+		assert.NoError(t, err, i)
 	}
 }
 
 func TestCanCreateOrderWithValidParams(t *testing.T) {
+	t.Parallel()
 	order, err := NewOrder("123", 12.12, 2)
 	assert.NoError(t, err, "should be valid")
 	assert.NotEqual(t, nil, order)
 }
 
 func TestCanCalculatePrice(t *testing.T) {
+	t.Parallel()
 	order, err := NewOrder("123", 10, 2)
 	assert.NoError(t, err)
 	order.CalculateFinalPrice()
