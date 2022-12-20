@@ -25,12 +25,6 @@ func main() {
 		"orders",
 	)
 
-	go func() {
-		<-time.After(time.Second * 30)
-		ch.Close()
-		fmt.Println("producer channel closed")
-	}()
-
 	for producerLoop := true; producerLoop; {
 		if ch.Done {
 			producerLoop = false
