@@ -24,11 +24,11 @@ func NoError(t *testing.T, err error, msg ...string) {
 }
 
 // Equal compare if two values are exactly equals
-func Equal(t *testing.T, notExpected, actual interface{}, msg ...string) {
-	if equal := cmp.Equal(notExpected, actual); equal {
+func Equal(t *testing.T, expected, actual interface{}, msg ...string) {
+	if equal := cmp.Equal(expected, actual); equal {
 		return
 	}
-	errorWithDiffMsg(t, notExpected, actual, msg...)
+	errorWithDiffMsg(t, expected, actual, msg...)
 }
 
 // EqualValues compare the underlying values of two types
@@ -56,11 +56,11 @@ func EqualValues(t *testing.T, expected, actual interface{}, msg ...string) {
 }
 
 // NotEqual asserts that two values are not equals
-func NotEqual(t *testing.T, expected, actual interface{}, msg ...string) {
-	if equal := cmp.Equal(expected, actual); !equal {
+func NotEqual(t *testing.T, notExpected, actual interface{}, msg ...string) {
+	if equal := cmp.Equal(notExpected, actual); !equal {
 		return
 	}
-	errorWithDiffMsg(t, expected, actual)
+	errorWithDiffMsg(t, notExpected, actual)
 }
 
 func errorWithDiffMsg(t *testing.T, expected, actual interface{}, msg ...string) {
