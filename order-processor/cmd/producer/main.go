@@ -10,15 +10,20 @@ import (
 
 	"github.com/google/uuid"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/xilapa/go-tiny-projects/order-processor/config"
 	orders "github.com/xilapa/go-tiny-projects/order-processor/internal/order/entity"
 	rabbithelper "github.com/xilapa/go-tiny-projects/order-processor/pkg/rabbitmq"
 	strongrabbit "github.com/xilapa/go-tiny-projects/strong-rabbit"
 )
 
 func main() {
+	cfg, err := config.NewConfig()
+	if err != nil {
+		panic(err)
+	}
 
 	ch := rabbithelper.SetupProducerChannel(
-		"amqp://guest:guest@localhost:5672/",
+		cfg.RabbitMq.Url,
 		"producer",
 		"order-processor",
 		"orders",

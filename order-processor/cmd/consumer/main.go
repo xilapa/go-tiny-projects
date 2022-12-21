@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/xilapa/go-tiny-projects/order-processor/config"
 	"github.com/xilapa/go-tiny-projects/order-processor/internal/order/infra/database"
 	"github.com/xilapa/go-tiny-projects/order-processor/internal/order/usecases"
 	rabbithelper "github.com/xilapa/go-tiny-projects/order-processor/pkg/rabbitmq"
@@ -16,8 +17,12 @@ import (
 )
 
 func main() {
+	cfg, err := config.NewConfig()
+	if err != nil {
+		panic(err)
+	}
 
-	db, err := database.InitialiazeDb("./orders.db?_fk=on")
+	db, err := database.InitialiazeDb(cfg.SqLite.ConnectionString)
 	if err != nil {
 		panic(err)
 	}
@@ -25,7 +30,7 @@ func main() {
 	useCase := usecases.NewCalculateFinalPriceUseCase(repo)
 
 	ch := rabbithelper.SetupConsumeChannel(
-		"amqp://guest:guest@localhost:5672/",
+		cfg.RabbitMq.Url,
 		"consume",
 		"orders",
 	)
