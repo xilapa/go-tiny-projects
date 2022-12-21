@@ -16,7 +16,6 @@ type calculateFinalPriceUseCaseTestSuite struct {
 
 func (s *calculateFinalPriceUseCaseTestSuite) handleReturnNoErrorWithValidCommand(t *testing.T) {
 	// arrange
-	// TODO: use a fake that reads initial data from json, and save data in memory
 	repo := database.NewOrderRepository(s.Db)
 	cmmd := &OrderCommand{ID: "123", Price: 10.3, Tax: 2.2}
 	useCase := NewCalculateFinalPriceUseCase(repo)

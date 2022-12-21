@@ -6,8 +6,6 @@ import (
 	assert "github.com/xilapa/go-tiny-projects/test-assertions"
 )
 
-// TODO 2: add fuzzy tests
-
 type orderOption func(*Order)
 
 func getTestOrder(opts ...orderOption) *Order {
@@ -92,4 +90,18 @@ func TestCanCalculatePrice(t *testing.T) {
 	assert.NoError(t, err)
 	order.CalculateFinalPrice()
 	assert.Equal(t, 12.0, order.FinalPrice)
+}
+
+// go test -fuzz FuzzCanCalutePrice
+// https://go.dev/security/fuzz/
+func FuzzCanCalutePrice(f *testing.F) {
+	// f.Add("abc123", 8.0, 2.1)
+	f.Fuzz(func(t *testing.T, id string, price, tax float64) {
+		order, err := NewOrder(id, price, tax)
+		if err != nil {
+			return
+		}
+		order.CalculateFinalPrice()
+		assert.NotEqual(t, price, order.FinalPrice)
+	})
 }
