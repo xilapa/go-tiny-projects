@@ -2,6 +2,7 @@ package pages
 
 import (
 	"os"
+	"strings"
 	"text/template"
 )
 
@@ -24,7 +25,7 @@ func LoadPage(title string) (*Page, error) {
 }
 
 func getFileName(title string) string {
-	return "data/" + title + ".txt"
+	return "data/" + strings.ToLower(title) + ".txt"
 }
 
 func ParsePageTemplates() *template.Template {
