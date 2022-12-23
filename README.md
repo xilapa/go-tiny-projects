@@ -5,6 +5,7 @@ A repository with small projects I'm doing to learn Golang. It's a work in progr
 The projects on this repository are based/inspired on the following contents:
  - Wesley Willians lessons from [Full Cycle Youtube channel](https://www.youtube.com/c/FullCycle/).
  - Table Driven Tests from [Golang Wiki](https://github.com/golang/go/wiki/TableDrivenTests)
+ - Writing Web Applications from [Go Blog](https://go.dev/doc/articles/wiki/)
 
 Also I've tried to follow some guidelines from [Uber Go Style Guide](https://github.com/uber-go/guide/blob/master/style.md), like the interface compliance at compile time, function grouping and ordering.
 
@@ -42,3 +43,7 @@ The StrongChannel can be of type Consumer or Publisher, each type is optimized t
 - Topology is not restored on reconnection.
 - To stop the channel just call 'Close()', it's idempotent as the official.
 - To stop a connection and remove it from the pool, call 'Close()' on the connection.
+
+## go-wiki
+A simple wiki server that store pages on a txt file. If the page doesn't exists, user is redirect to the edit page.
+    To start the wiki go to go-wiki and run: `go run .`

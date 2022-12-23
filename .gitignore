@@ -12,6 +12,8 @@
 !README.md
 !LICENSE
 
+!*.html
+
 # !Makefile
 
 # ...even if they are in subdirectories
