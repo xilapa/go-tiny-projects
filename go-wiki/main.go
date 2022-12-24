@@ -8,6 +8,11 @@ import (
 	"github.com/xilapa/go-tiny-projects/go-wiki/pages"
 )
 
+var (
+	templates = pages.ParsePageTemplates()
+	validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
+)
+
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 	p, err := pages.LoadPage(title)
 	if err != nil {
@@ -61,9 +66,6 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *pages.Page) {
 func writeError(w http.ResponseWriter, err error) {
 	http.Error(w, err.Error(), http.StatusInternalServerError)
 }
-
-var templates = pages.ParsePageTemplates()
-var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
 
 func main() {
 	if err := pages.EnsureDataDirExists(); err != nil {

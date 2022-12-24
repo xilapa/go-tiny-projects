@@ -1,14 +1,18 @@
 package pages
 
 import (
+	"html/template"
 	"os"
+	"regexp"
 	"strings"
-	"text/template"
 )
 
+var regexInterPageLink = regexp.MustCompile(`\[([a-zA-Z0-9]+)\]`)
+
 type Page struct {
-	Title string
-	Body  []byte
+	Title    string
+	Body     []byte
+	BodyView template.HTML
 }
 
 func (p *Page) Save() error {
@@ -21,7 +25,17 @@ func LoadPage(title string) (*Page, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Page{Title: title, Body: body}, nil
+
+	bodyWithLinks := regexInterPageLink.ReplaceAllStringFunc(string(body),
+		func(s string) string {
+			match := regexInterPageLink.FindStringSubmatch(string(s))
+			return `<a href="/view/` + match[1] + `">` + match[1] + `</a>`
+		})
+	bodyWithLinks = strings.Replace(bodyWithLinks, "\n", "<br>", -1)
+
+	p := &Page{Title: title, Body: body, BodyView: template.HTML(bodyWithLinks)}
+
+	return p, nil
 }
 
 func getFileName(title string) string {
