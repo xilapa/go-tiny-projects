@@ -26,7 +26,9 @@ func LoadPage(title string) (*Page, error) {
 		return nil, err
 	}
 
-	bodyWithLinks := regexInterPageLink.ReplaceAllStringFunc(string(body),
+	sanit := template.HTMLEscapeString(string(body))
+
+	bodyWithLinks := regexInterPageLink.ReplaceAllStringFunc(sanit,
 		func(s string) string {
 			match := regexInterPageLink.FindStringSubmatch(string(s))
 			return `<a href="/view/` + match[1] + `">` + match[1] + `</a>`
