@@ -46,4 +46,9 @@ The StrongChannel can be of type Consumer or Publisher, each type is optimized t
 
 ## go-wiki
 A simple wiki server that store pages on a txt file. If the page doesn't exists, user is redirect to the edit page.
-    To start the wiki go to go-wiki and run: `go run .`
+    To start the wiki go to go-wiki and run: `go run .` 
+
+
+## lfu-cache
+A in-memory cache with Least Frequently Used (LFU) eviction algorithm with O(1) time complexity. The algorithm is inspired on (this paper)[https://www.researchgate.net/publication/355493987_An_O1_algorithm_for_implementing_the_LFU_cache_eviction_scheme], that proposes the use of a linked list of linked lists to store the cache items frequency. 
+On this package, instead of using linked list of linked lists, a map with linked lists and one variable is used to keep track of items usage frequency.  Linked lists of cache items keys, are stored on the map, having the frequency as key. The lower usage frequency is stored on a variable.

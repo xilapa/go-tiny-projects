@@ -5,4 +5,5 @@ use (
 	./test-assertions
 	./strong-rabbit
 	./go-wiki
+	./lfu-cache
 )
