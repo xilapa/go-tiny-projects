@@ -5,9 +5,12 @@ import (
 	"os"
 	"regexp"
 	"strings"
+
+	lfucache "github.com/xilapa/go-tiny-projects/lfu-cache"
 )
 
 var regexInterPageLink = regexp.MustCompile(`\[([a-zA-Z0-9]+)\]`)
+var pageCache = lfucache.New(2)
 
 type Page struct {
 	Title    string
@@ -20,6 +23,10 @@ func (p *Page) Save() error {
 }
 
 func LoadPage(title string) (*Page, error) {
+	if page, ok := pageCache.Get(title); ok {
+		return page.(*Page), nil
+	}
+
 	filename := getFileName(title)
 	body, err := os.ReadFile(filename)
 	if err != nil {
@@ -36,6 +43,8 @@ func LoadPage(title string) (*Page, error) {
 	bodyWithLinks = strings.Replace(bodyWithLinks, "\n", "<br>", -1)
 
 	p := &Page{Title: title, Body: body, BodyView: template.HTML(bodyWithLinks)}
+
+	pageCache.Add(title, p)
 
 	return p, nil
 }
