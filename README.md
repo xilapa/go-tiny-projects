@@ -47,6 +47,7 @@ The StrongChannel can be of type Consumer or Publisher, each type is optimized t
 ## go-wiki
 A simple wiki server that store pages on a txt file. If the page doesn't exists, user is redirect to the edit page.
     To start the wiki go to go-wiki and run: `go run .` 
+The wiki make use of the below lfu-cache to keep the most accessed pages in memory. These pages are listed at `localhost:8080/home`.
 
 
 ## lfu-cache

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <script>
+        function goToPage(e){
+            if (e && e.keyCode != 13){
+                return
+            }
+            const p = document.getElementById('page-name').value
+            window.location.href = `/view/${p}`
+        }
+    </script>
+</head>
+<body>
+    <h2>Go-wiki</h2>
+    {{if .Count}}
+    <div>Most accessed pages</div>
+    <ol>
+        {{range .Names}}
+            <li><a href="/view/{{.}}">{{.}}</a></li>
+        {{end}}
+    </ol>
+    {{end}}
+    <div>Create or edit a page</div>
+
+    <input type="text" id="page-name" onkeypress="goToPage(event)">
+    <button onclick="goToPage()">Go</button>
+</body>
+</html>

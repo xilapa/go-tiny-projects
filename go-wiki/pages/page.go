@@ -5,12 +5,18 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"time"
 
 	lfucache "github.com/xilapa/go-tiny-projects/lfu-cache"
 )
 
-var regexInterPageLink = regexp.MustCompile(`\[([a-zA-Z0-9]+)\]`)
-var pageCache = lfucache.New(2)
+const maxCachePageCount = 2
+
+var (
+	regexInterPageLink = regexp.MustCompile(`\[([a-zA-Z0-9]+)\]`)
+	pageCache          = lfucache.New(maxCachePageCount)
+	hotPages           *Hotpages
+)
 
 type Page struct {
 	Title    string
@@ -54,9 +60,37 @@ func getFileName(title string) string {
 }
 
 func ParsePageTemplates() *template.Template {
-	return template.Must(template.ParseFiles("pages/edit.html", "pages/view.html"))
+	return template.Must(template.ParseFiles("pages/edit.html", "pages/view.html", "pages/home.html"))
 }
 
 func EnsureDataDirExists() error {
 	return os.MkdirAll("data", os.ModePerm)
+}
+
+type Hotpages struct {
+	Names      []string
+	Count      int
+	expireDate time.Time
+	full       bool
+}
+
+func LoadHotPages() *Hotpages {
+	if hotPages != nil && hotPages.full && time.Now().After(hotPages.expireDate) {
+		return hotPages
+	}
+
+	cacheCount := pageCache.Count()
+	newHotPages := make([]string, cacheCount)
+	i := 0
+	for p := range pageCache.GetAllKeys() {
+		newHotPages[i] = p
+		i++
+	}
+
+	return &Hotpages{
+		Names:      newHotPages,
+		Count:      len(newHotPages),
+		expireDate: time.Now().Add(time.Hour),
+		full:       cacheCount == maxCachePageCount,
+	}
 }
