@@ -147,3 +147,23 @@ func (c *LFUCache) Get(key string) (any, bool) {
 	c.increaseFreq(item, key)
 	return item.value, true
 }
+
+func (c *LFUCache) Count() int {
+	return len(c.cache)
+}
+
+// GetAllKeys returns a channel with all keys stored
+// on cache.
+// The key may be deleted by concurrent access after
+// being retrieved, so check if the cache item exists
+// when using the key.
+func (c *LFUCache) GetAllKeys() <-chan string {
+	iterator := make(chan string, 1)
+	go func() {
+		for key := range c.cache {
+			iterator <- key
+		}
+		close(iterator)
+	}()
+	return iterator
+}
