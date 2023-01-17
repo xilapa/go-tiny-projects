@@ -1,8 +1,9 @@
 package lfucache
 
 import (
-	"container/list"
 	"sync"
+
+	"github.com/xilapa/go-tiny-projects/lfu-cache/list"
 )
 
 // TODO: implement a minimum lfu lifetime,
@@ -132,7 +133,7 @@ func (c *LFUCache) removeLfu() {
 	}
 
 	// remove the lfu item from cache
-	delete(c.cache, lfuEl.Value.(string))
+	delete(c.cache, lfuEl.Value)
 }
 
 func (c *LFUCache) Get(key string) (any, bool) {
