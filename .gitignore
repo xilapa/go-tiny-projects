@@ -13,6 +13,7 @@
 !LICENSE
 
 !*.html
+!/lfu-cache/benchs/*.txt
 
 # !Makefile
 
