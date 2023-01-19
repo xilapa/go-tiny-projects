@@ -1,6 +1,6 @@
 # Go Tiny Projects
 
-A repository with small projects I'm doing to learn Golang. It's a work in progress.
+A repository with small projects I've done to learn the Golang fundamentals.
 
 The projects on this repository are based/inspired on the following contents:
  - Wesley Willians lessons from [Full Cycle Youtube channel](https://www.youtube.com/c/FullCycle/).
