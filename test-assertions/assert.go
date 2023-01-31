@@ -10,20 +10,21 @@ import (
 
 // TODO: create tests for assertions
 
+// Error assert that error is not nil.
 func Error(t *testing.T, err error, msg ...string) {
 	if err == nil {
 		t.Error("expected an error, got nil", msg)
 	}
 }
 
-// NoError assert that error is nil
+// NoError assert that error is nil.
 func NoError(t *testing.T, err error, msg ...string) {
 	if err != nil {
 		t.Error("err not expected", msg)
 	}
 }
 
-// Equal compare if two values are exactly equals
+// Equal compare if two values are exactly equals.
 func Equal(t *testing.T, expected, actual interface{}, msg ...string) {
 	if equal := cmp.Equal(expected, actual); equal {
 		return
@@ -31,7 +32,7 @@ func Equal(t *testing.T, expected, actual interface{}, msg ...string) {
 	errorWithDiffMsg(t, expected, actual, msg...)
 }
 
-// EqualValues compare the underlying values of two types
+// EqualValues compare the underlying values of two types.
 func EqualValues(t *testing.T, expected, actual interface{}, msg ...string) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -55,12 +56,26 @@ func EqualValues(t *testing.T, expected, actual interface{}, msg ...string) {
 	errorWithDiffMsg(t, expected, actual, msg...)
 }
 
-// NotEqual asserts that two values are not equals
+// NotEqual asserts that two values are not equals.
 func NotEqual(t *testing.T, notExpected, actual interface{}, msg ...string) {
 	if equal := cmp.Equal(notExpected, actual); !equal {
 		return
 	}
 	errorWithDiffMsg(t, notExpected, actual)
+}
+
+// True asserts that the value is true.
+func True(t *testing.T, actual bool, msg ...string) {
+	if !actual {
+		t.Error("Expected true", msg)
+	}
+}
+
+// False asserts that the value is false.
+func False(t *testing.T, actual bool, msg ...string) {
+	if actual {
+		t.Error("Expected false", msg)
+	}
 }
 
 func errorWithDiffMsg(t *testing.T, expected, actual interface{}, msg ...string) {
