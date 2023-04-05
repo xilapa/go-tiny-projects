@@ -14,9 +14,6 @@ import (
 
 // TODO: implement cache stats
 
-// TODO: use a custom linked list implementation
-// to avoid casting of value to string
-
 type LFUCache struct {
 	lowerFreq int
 	freqs     map[int]*list.List // list of keys
